@@ -103,7 +103,7 @@
       ul {
         padding: 0;
         margin: 0;
-        overflow-y: auto;
+        overflow-y: scroll;
       }
 
       li {
@@ -113,13 +113,27 @@
         padding: 1.3rem;
       }
 
-      #todolist p {
+      #todoList p {
+        display: flex;
+        gap: 1rem;
+        color: var(--dark);
+        align-items: center;
+      }
+
+      #todoList .disabled {
         color: var(--grey);
       }
 
       .disabled {
         display: flex;
         text-decoration: line-through;
+      }
+
+      input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
       }
 
       input[type="checkbox"]::before {
@@ -134,7 +148,7 @@
         color: transparent;
       }
 
-      input[type="checkbox"]::before::after {
+      input[type="checkbox"]:checked::before {
         color: var(--white);
         background-color: var(--green);
         border: 0.06rem solid var(--green);
@@ -146,10 +160,12 @@
       }
 
       .counter-container {
-        height: 2rem;
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        height: 2rem;
         color: var(--gradient);
+        padding: 0 0.5rem;
       }
 
       .counter-container p {
@@ -157,9 +173,17 @@
       }
 
       .counter-container button {
+        color: var(--white);
+        font-size: 0.9rem;
+        padding: 0.7rem 1.5rem;
+        border-radius: 0.3rem;
+        background-color: red;
         border: none;
-        background-color: transparent;
-        color: var(--gradient);
+        cursor: pointer;
+      }
+
+      .counter-container button:hover {
+        transform: scale(1.05);
       }
 
       .footer {
@@ -186,8 +210,6 @@
 
       .scroll {
         height: 15rem;
-        scrollbar-width: thin;
-        overflow-y: auto;
       }
 
       .scroll::-webkit-scrollbar {
@@ -222,7 +244,7 @@
       <div>
         <hr class="counter" />
         <div class="counter-container">
-          <p><span>0</span> items total</p>
+          <p><span id="todoCount">0</span> items total</p>
           <button id="deleteButton">Delete All</button>
         </div>
       </div>
@@ -234,4 +256,95 @@
       </div>
     </footer>
   </body>
+  <script>
+    // Retrieve todo from localstorage or initialize an empty array
+
+    let todo = JSON.parse(localStorage.getItem("todo")) || [];
+
+    const todoInput = document.getElementById("todoInput");
+    const todoList = document.getElementById("todoList");
+    const todoCount = document.getElementById("todoCount");
+    const addbutton = document.querySelector(".btn");
+    const deleteButton = document.getElementById("deleteButton");
+
+    // Initialize
+
+    document.addEventListener("DOMContentLoaded", function () {
+      addbutton.addEventListener("click", addTask);
+      todoInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          addTask();
+        }
+      });
+      deleteButton.addEventListener("click", deleteAllTasks);
+      displayTasks();
+    });
+
+    function addTask() {
+      const newTask = todoInput.value.trim();
+      if (newTask !== "") {
+        todo.push({ text: newTask, disabled: false });
+        saveToLocalStorage();
+        todoInput.value = "";
+        displayTasks();
+      }
+    }
+
+    function displayTasks() {
+      todoList.innerHTML = "";
+      todo.forEach((item, index) => {
+        const p = document.createElement("p");
+        p.innerHTML = `
+          <div class="todo-container">
+              <input type= "checkbox" class="todo-checkbox"
+              id= "input-${index}" ${item.disabled ? "checked" : ""}>
+
+              <p id="todo-${index}" class="${item.disabled ? "disabled" : ""}"
+              onclick="editTask(${index})" > ${item.text}
+              </p>
+          </div> `;
+        p.querySelector(".todo-checkbox").addEventListener("change", () => {
+          toggleTask(index);
+        });
+        todoList.appendChild(p);
+      });
+      todoCount.textContent = todo.length;
+    }
+
+    function editTask() {
+      const todoItem = document.getElementById(`todo-${index}`);
+      const existingText = todo[index].text;
+      const inputElement = document.createElement("input");
+
+      inputElement.value = existingText;
+      todoItem.replaceWith(inputElement);
+      inputElement.focus();
+
+      inputElement.addEventListener("blur", function () {
+        const updatedText = inputElement.value.trim();
+        if (updatedText) {
+          tod[index].text = updatedText;
+          saveToLocalStorage();
+        }
+        displayTasks();
+      });
+    }
+
+    function toggleTask(index) {
+      todo[index].disabled = !todo[index].disabled;
+      saveToLocalStorage();
+      displayTasks();
+    }
+
+    function deleteAllTasks() {
+      todo = [];
+      saveToLocalStorage();
+      displayTasks();
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem("todo", JSON.stringify(todo));
+    }
+  </script>
 </html>
