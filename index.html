@@ -17,7 +17,7 @@
         --grey: #b1bacb;
         --grey-border: rgba(210, 210, 210, 0.75);
         --grey-light: #eeeeee;
-        --grey-dark: $405175;
+        --grey-dark: #405175;
         --blue: #2d70fd;
         --green: #00d8a7;
         --white: #ffffff;
@@ -106,12 +106,12 @@
         overflow-y: scroll;
       }
 
-      li {
+      /* li {
         display: flex;
         flex-direction: column;
         gap: 1.2rem;
         padding: 1.3rem;
-      }
+      } */
 
       #todoList p {
         display: flex;
@@ -224,6 +224,34 @@
       .scroll::-webkit-scrollbar-track {
         display: none;
       }
+
+      /* Her bir görev satırı */
+      li.task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        padding: 0.9rem 1rem;
+      }
+
+      /* Metin */
+      .task-text {
+        flex: 1;
+        color: var(--dark);
+      }
+
+      /* Tekli silme butonu */
+      .delete-btn {
+        background: red;
+        color: var(--white);
+        border: none;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        padding: 0.35rem 0.7rem;
+      }
+      .delete-btn:hover {
+        transform: scale(1.05);
+      }
     </style>
   </head>
   <body>
@@ -257,23 +285,22 @@
     </footer>
   </body>
   <script>
-    // Retrieve todo from localstorage or initialize an empty array
-
+    // localStorage'dan todo verilerini alır yoksa boş array başlatır
     let todo = JSON.parse(localStorage.getItem("todo")) || [];
 
+    //HTML elementlerini seçer ve değişkenlere atar
     const todoInput = document.getElementById("todoInput");
     const todoList = document.getElementById("todoList");
     const todoCount = document.getElementById("todoCount");
     const addbutton = document.querySelector(".btn");
     const deleteButton = document.getElementById("deleteButton");
 
-    // Initialize
-
+    //Sayfa yüklendiğinde çalışacak fonksiyon
     document.addEventListener("DOMContentLoaded", function () {
       addbutton.addEventListener("click", addTask);
       todoInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
-          event.preventDefault();
+          event.preventDefault(); // Formun varsayılan gönderimini engeller
           addTask();
         }
       });
@@ -281,68 +308,115 @@
       displayTasks();
     });
 
+    // Yeni göre ekleme fonksiyonu
     function addTask() {
-      const newTask = todoInput.value.trim();
+      const newTask = todoInput.value.trim(); // Boşlukları kaldırır
       if (newTask !== "") {
+        // Yeni görevi todo dizisine ekler
         todo.push({ text: newTask, disabled: false });
+
         saveToLocalStorage();
         todoInput.value = "";
         displayTasks();
       }
     }
 
+    // Görevleri ekranda gösteren fonksiyon
     function displayTasks() {
       todoList.innerHTML = "";
-      todo.forEach((item, index) => {
-        const p = document.createElement("p");
-        p.innerHTML = `
-          <div class="todo-container">
-              <input type= "checkbox" class="todo-checkbox"
-              id= "input-${index}" ${item.disabled ? "checked" : ""}>
 
-              <p id="todo-${index}" class="${item.disabled ? "disabled" : ""}"
-              onclick="editTask(${index})" > ${item.text}
-              </p>
-          </div> `;
-        p.querySelector(".todo-checkbox").addEventListener("change", () => {
-          toggleTask(index);
-        });
-        todoList.appendChild(p);
+      // Her ggörev için HTML elementi oluşturulur
+      todo.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.className = "task";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = !!item.disabled;
+
+        // Checkbox değiştiğinde toggleTask fonksiyonunu çalıştırır
+        checkbox.addEventListener("change", () => toggleTask(index));
+
+        const text = document.createElement("span");
+        text.id = `todo-${index}`;
+        text.className = `task-text ${item.disabled ? "disabled" : ""}`;
+        text.textContent = item.text;
+        text.addEventListener("click", () => editTask(index));
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "x";
+        delBtn.addEventListener("click", () => deleteTask(index));
+
+        // Tüm elementleri li'ye ekler
+        li.append(checkbox, text, delBtn);
+
+        todoList.appendChild(li);
       });
+
+      // Toplam görev sayısını günceller
       todoCount.textContent = todo.length;
     }
 
-    function editTask() {
-      const todoItem = document.getElementById(`todo-${index}`);
-      const existingText = todo[index].text;
-      const inputElement = document.createElement("input");
+    function editTask(index) {
+      const textEl = document.getElementById(`todo-${index}`);
+      if (!textEl) return;
 
-      inputElement.value = existingText;
-      todoItem.replaceWith(inputElement);
+      // Düzenleme input'u oluşturur
+      const inputElement = document.createElement("input");
+      inputElement.type = "text";
+      inputElement.value = todo[index].text;
+      inputElement.className = "input-field";
+
+      // Metin elementini input ile değiştirir
+      textEl.replaceWith(inputElement);
       inputElement.focus();
 
-      inputElement.addEventListener("blur", function () {
+      // Düzenleme bitirme fonksiyonu
+      const commit = () => {
         const updatedText = inputElement.value.trim();
         if (updatedText) {
-          tod[index].text = updatedText;
+          todo[index].text = updatedText;
           saveToLocalStorage();
         }
         displayTasks();
+      };
+
+      // Input odak kaybettiğinde düzenleme bitirilir
+      inputElement.addEventListener("blur", commit);
+
+      inputElement.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          commit();
+        }
+        // } else if (e.key === "Escape") {
+        //   displayTasks();
+        // }
       });
     }
 
+    // Görevin tamamlandı/tamamlanmadı durumunu değiştiren fonksiyon
     function toggleTask(index) {
       todo[index].disabled = !todo[index].disabled;
       saveToLocalStorage();
       displayTasks();
     }
 
+    // Belirli bir görevi silen fonksiyon
+    function deleteTask(index) {
+      todo.splice(index, 1);
+      saveToLocalStorage();
+      displayTasks();
+    }
+
+    // Tüm görevleri silen fonksiyon
     function deleteAllTasks() {
       todo = [];
       saveToLocalStorage();
       displayTasks();
     }
-
+    // Verileri localStorage'e kaydeden fonksiyon
     function saveToLocalStorage() {
       localStorage.setItem("todo", JSON.stringify(todo));
     }
