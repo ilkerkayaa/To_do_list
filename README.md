@@ -25,7 +25,7 @@ Tarayıcı üzerinde çalışır ve veriler **LocalStorage** sayesinde kaybolmaz
 
 ## 📂 Kurulum
 
-```bash
+
 git clone https://github.com/kullaniciAdin/todo-list-app.git
 cd todo-list-app
 ## 📖 Kullanım
