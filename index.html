@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todo</title>
+    <meta
+      name="description"
+      content="Basit ve kullanışlı bir yapılacaklar listesi uygulaması."
+    />
+    <meta
+      name="keywords"
+      content="to-do, yapılacaklar listesi, task manager, javascript, localstorage, todo app"
+    />
+    <meta name="author" content="Ilker Kaya" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
       :root {
@@ -23,6 +37,7 @@
         --white: #ffffff;
       }
       body {
+        font-family: "Poppins", sans-serif;
         background: var(--gradient);
         margin: 0;
         height: 100vh;
@@ -72,6 +87,7 @@
       }
 
       h2 {
+        font-family: "Poppins", sans-serif;
         text-transform: uppercase;
         height: 3rem;
         color: var(--dark);
@@ -106,13 +122,6 @@
         overflow-y: scroll;
       }
 
-      /* li {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        padding: 1.3rem;
-      } */
-
       #todoList p {
         display: flex;
         gap: 1rem;
@@ -120,11 +129,11 @@
         align-items: center;
       }
 
-      #todoList .disabled {
+      #todoList .completed {
         color: var(--grey);
       }
 
-      .disabled {
+      .completed {
         display: flex;
         text-decoration: line-through;
       }
@@ -225,7 +234,6 @@
         display: none;
       }
 
-      /* Her bir görev satırı */
       li.task {
         display: flex;
         align-items: center;
@@ -234,13 +242,12 @@
         padding: 0.9rem 1rem;
       }
 
-      /* Metin */
       .task-text {
+        font-family: "Poppins", sans-serif;
         flex: 1;
         color: var(--dark);
       }
 
-      /* Tekli silme butonu */
       .delete-btn {
         background: red;
         color: var(--white);
@@ -251,6 +258,55 @@
       }
       .delete-btn:hover {
         transform: scale(1.05);
+      }
+
+      @media (max-width: 480px) {
+        .todo {
+          width: 80%;
+          padding: 1.5rem;
+          height: auto;
+        }
+
+        .input {
+          flex-direction: row;
+          gap: 0.5rem;
+        }
+
+        .input-field {
+          flex: 1;
+          padding: 0.8rem;
+          font-size: 0.9rem;
+        }
+
+        .btn {
+          position: static;
+          flex-shrink: 0;
+          padding: 0.8rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        li.task {
+          gap: 0.5rem;
+          padding: 0.6rem;
+          font-size: 0.9rem;
+        }
+
+        .delete-btn {
+          padding: 0.3rem 0.6rem;
+          font-size: 0.8rem;
+        }
+
+        .counter-container {
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 0.85rem;
+        }
+
+        footer .footer {
+          flex-direction: row;
+          justify-content: center;
+          font-size: 0.8rem;
+        }
       }
     </style>
   </head>
@@ -313,7 +369,7 @@
       const newTask = todoInput.value.trim(); // Boşlukları kaldırır
       if (newTask !== "") {
         // Yeni görevi todo dizisine ekler
-        todo.push({ text: newTask, disabled: false });
+        todo.push({ text: newTask, completed: false });
 
         saveToLocalStorage();
         todoInput.value = "";
@@ -332,14 +388,14 @@
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.checked = !!item.disabled;
+        checkbox.checked = !!item.completed;
 
         // Checkbox değiştiğinde toggleTask fonksiyonunu çalıştırır
         checkbox.addEventListener("change", () => toggleTask(index));
 
         const text = document.createElement("span");
         text.id = `todo-${index}`;
-        text.className = `task-text ${item.disabled ? "disabled" : ""}`;
+        text.className = `task-text ${item.completed ? "completed" : ""}`;
         text.textContent = item.text;
         text.addEventListener("click", () => editTask(index));
 
@@ -390,15 +446,12 @@
           e.preventDefault();
           commit();
         }
-        // } else if (e.key === "Escape") {
-        //   displayTasks();
-        // }
       });
     }
 
     // Görevin tamamlandı/tamamlanmadı durumunu değiştiren fonksiyon
     function toggleTask(index) {
-      todo[index].disabled = !todo[index].disabled;
+      todo[index].completed = !todo[index].completed;
       saveToLocalStorage();
       displayTasks();
     }
