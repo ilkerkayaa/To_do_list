@@ -40,5 +40,5 @@ cd todo-list-app
 
 - 💻 Masaüstü için geniş düzen
 - 📱 Mobil cihazlarda kaydırma ve boşluk ayarları
-- Yanlardan boşluk, ortalanmış kutu tasarımı
+
 
