@@ -31,10 +31,32 @@ cd todo-list-app
 
 ## Kullanım
 
-1. Input alanına görev yazıp **Add** butonuna bas.
-2. Görevi tamamladığında kutucuğu işaretle.
-3. Üzerine tıklayarak düzenleyebilir veya `x` ile silebilirsin.
-4. **Delete All** butonuyla tüm görevleri temizleyebilirsin.
+ **Görev Ekleme**
+   - Üst kısımdaki input alanına yapılacak görevi yaz.  
+   - Klavyeden **Enter** tuşuna basabilir veya sağdaki **Add** butonuna tıklayabilirsin.  
+   - Yazdığın görev listeye eklenecek.  
+
+ **Görev Tamamlama**
+   - Listenin sol tarafındaki kutucuğu işaretlediğinde görev tamamlanmış sayılır.  
+   - Tamamlanan görevler gri renkte ve üzeri çizili olarak gösterilir.  
+   - Kutucuğun işaretini kaldırarak görevi tekrar aktif hale getirebilirsin.  
+
+**Görev Düzenleme**
+   - Bir görevin üzerine **tıklayarak düzenleme moduna** geçebilirsin.  
+   - Görev metnini değiştirip **Enter** ile kaydedebilir veya kutunun dışına tıklayabilirsin.  
+
+**Görev Silme**
+   - Her görevin sağ tarafında bulunan kırmızı **x** butonuna basarak yalnızca o görevi silebilirsin.  
+
+**Tümünü Silme**
+   - Listenin altındaki **Delete All** butonuna basarak tüm görevleri tek seferde silebilirsin.  
+
+**Görev Sayısı**
+   - Listenin altında toplam kaç görev olduğunu gösteren bir sayaç bulunur.  
+
+ **Kalıcı Kayıt (LocalStorage)**
+   - Tüm görevler tarayıcıda **LocalStorage** kullanılarak saklanır.  
+   - Sayfayı kapatsan bile liste kaybolmaz, tekrar açtığında aynı görevleri görebilirsin.
 
 ## 📱 Responsive Tasarım
 
