@@ -29,7 +29,7 @@ git clone https://github.com/ilkerkayaa/To_do_list.git
 
 cd todo-list-app
 
-##
+## Kullanım
 
 1. Input alanına görev yazıp **Add** butonuna bas.
 2. Görevi tamamladığında kutucuğu işaretle.
