@@ -14,7 +14,7 @@ Tarayıcı üzerinde çalışır ve veriler **LocalStorage** sayesinde kaybolmaz
 
 ## 📸 Ekran Görüntüsü
 
-(To-do-List.png)
+![Todo App Görüntüsü](To-do-List.png)
 
 ## 🛠️ Kullanılan Teknolojiler
 
